@@ -18,7 +18,11 @@
             return;
         }
         // 由内容脚本调用 chrome API 完成和background的交互
-        connect.postMessage(e.data);
+        connect = connect || chrome.runtime.connect({name: "cross_request-bridge"});
+        // 确保connect还有效, fix 问题：Uncaught Error: Attempting to use a disconnected port object
+        if (connect) {
+          connect.postMessage(e.data);
+        }
     });
 
     connect.onMessage.addListener((msg) => {
